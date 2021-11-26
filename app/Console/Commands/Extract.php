@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Vulnerability;
 use Illuminate\Console\Command;
 use Goutte\Client;
 
@@ -66,7 +67,6 @@ class Extract extends Command
 
         $titles = collect();
         $descriptions = collect();
-        $data = [];
 
         $crawler->filter($this->titles)->each(function ($node) use ($titles) {
             $titles->push($node->text());
@@ -80,10 +80,10 @@ class Extract extends Command
 
         for ($i = 0; $i < $descriptions->count(); $i++)
         {
-            $data[] = [
+            Vulnerability::query()->create([
                 'title' => $titles->get($i),
                 'description' => $descriptions->get($i),
-            ];
+            ]);
         }
 
         return Command::SUCCESS;
